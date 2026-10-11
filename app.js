@@ -26,10 +26,17 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// Fungsi Toggle Dropdown
-function toggleDropdown(dropdownId) {
-  event.stopPropagation();
+// Fungsi Toggle Dropdown (Diberi parameter event 'e' agar lolos build GitHub Pages)
+function toggleDropdown(dropdownId, e) {
+  if (e && typeof e.stopPropagation === "function") {
+    e.stopPropagation();
+  } else if (window.event) {
+    window.event.cancelBubble = true;
+  }
+
   const dropdown = document.getElementById(dropdownId);
+  if (!dropdown) return;
+
   const isActive = dropdown.classList.contains("active");
 
   closeAllDropdowns();
@@ -39,19 +46,29 @@ function toggleDropdown(dropdownId) {
   }
 }
 
-function setDropdownValue(dropdownId, value, text) {
-  event.stopPropagation();
+function setDropdownValue(dropdownId, value, text, e) {
+  if (e && typeof e.stopPropagation === "function") {
+    e.stopPropagation();
+  } else if (window.event) {
+    window.event.cancelBubble = true;
+  }
   
   if (dropdownId === 'journal-cat-dropdown') {
-    document.getElementById("journal-cat-text").innerText = text;
-    document.getElementById("journal-category").value = value;
+    const textEl = document.getElementById("journal-cat-text");
+    const valEl = document.getElementById("journal-category");
+    if (textEl) textEl.innerText = text;
+    if (valEl) valEl.value = value;
   } else if (dropdownId === 'calc-custom-dropdown') {
-    document.getElementById("calc-selected-text").innerText = text;
-    document.getElementById("calc-selector").value = value;
+    const textEl = document.getElementById("calc-selected-text");
+    const valEl = document.getElementById("calc-selector");
+    if (textEl) textEl.innerText = text;
+    if (valEl) valEl.value = value;
     switchCalculatorMode();
   } else if (dropdownId === 'three-known-dropdown') {
-    document.getElementById("three-known-text").innerText = text;
-    document.getElementById("three-known").value = value;
+    const textEl = document.getElementById("three-known-text");
+    const valEl = document.getElementById("three-known");
+    if (textEl) textEl.innerText = text;
+    if (valEl) valEl.value = value;
     toggleThreeRuleInputs();
   }
 
@@ -73,6 +90,8 @@ function showPopup(title, message, type = "info", onOk = null) {
   const msgEl = document.getElementById("popup-message");
   const iconEl = document.getElementById("popup-icon");
   const actionsEl = document.getElementById("popup-actions");
+
+  if (!modal) return;
 
   titleEl.innerText = title;
   msgEl.innerText = message;
@@ -104,7 +123,8 @@ function showPopup(title, message, type = "info", onOk = null) {
 }
 
 function closePopup() {
-  document.getElementById("modal-popup").classList.remove("active");
+  const modal = document.getElementById("modal-popup");
+  if (modal) modal.classList.remove("active");
 }
 
 // ==========================================
@@ -155,11 +175,13 @@ async function uploadImageToStorage(file) {
 // MODAL CONTROLLER
 // ==========================================
 function openModal(id) {
-  document.getElementById(id).classList.add("active");
+  const modal = document.getElementById(id);
+  if (modal) modal.classList.add("active");
 }
 
 function closeModal(id) {
-  document.getElementById(id).classList.remove("active");
+  const modal = document.getElementById(id);
+  if (modal) modal.classList.remove("active");
 }
 
 // ==========================================
@@ -205,6 +227,8 @@ function updateAdminUI() {
 // ==========================================
 async function loadJournals() {
   const listEl = document.getElementById("journal-list");
+  if (!listEl) return;
+
   listEl.innerHTML = `<p style="color: var(--slate-500);">Memuat data dari database cloud...</p>`;
 
   try {
@@ -292,12 +316,16 @@ function renderJournals(journals) {
   const listEl = document.getElementById("journal-list");
   const countEl = document.getElementById("journal-count");
 
+  if (!listEl) return;
+
   let filtered = journals;
   if (currentCategory !== "ALL") {
     filtered = journals.filter(j => j.category === currentCategory);
   }
 
-  const searchQuery = document.getElementById("search-input").value.toLowerCase();
+  const searchInput = document.getElementById("search-input");
+  const searchQuery = searchInput ? searchInput.value.toLowerCase() : "";
+  
   if (searchQuery) {
     filtered = filtered.filter(j => 
       j.title.toLowerCase().includes(searchQuery) || 
@@ -305,7 +333,9 @@ function renderJournals(journals) {
     );
   }
 
-  countEl.innerText = `${filtered.length} Parameter ditemukan`;
+  if (countEl) {
+    countEl.innerText = `${filtered.length} Parameter ditemukan`;
+  }
 
   if (!filtered || filtered.length === 0) {
     listEl.innerHTML = `<p style="color: var(--slate-500);">Tidak ada parameter atau jurnal yang sesuai.</p>`;
@@ -348,8 +378,9 @@ function renderJournals(journals) {
 function selectCategory(cat, el) {
   currentCategory = cat;
   document.querySelectorAll(".category-list li").forEach(li => li.classList.remove("active"));
-  el.classList.add("active");
-  document.getElementById("current-category-title").innerText = cat === "ALL" ? "Semua Parameter" : cat;
+  if (el) el.classList.add("active");
+  const catTitle = document.getElementById("current-category-title");
+  if (catTitle) catTitle.innerText = cat === "ALL" ? "Semua Parameter" : cat;
   renderJournals(allJournals);
 }
 
@@ -361,7 +392,9 @@ function filterJournals() {
 // TAMBAH & EDIT JURNAL
 // ==========================================
 function openAddJournalModal() {
-  document.getElementById("journal-form").reset();
+  const form = document.getElementById("journal-form");
+  if (form) form.reset();
+
   document.getElementById("edit-journal-id").value = "";
   document.getElementById("form-modal-title").innerText = "Tambah Parameter / Jurnal";
   document.getElementById("form-modal-subtitle").innerText = "Tambahkan data referensi baru ke database cloud.";
@@ -493,6 +526,8 @@ async function openJournalDetail(id) {
 
 async function loadComments(journalId) {
   const commentsListEl = document.getElementById("comments-list");
+  if (!commentsListEl) return;
+  
   commentsListEl.innerHTML = `<p class="comment-text">Memuat komentar...</p>`;
 
   try {
@@ -559,8 +594,11 @@ async function deleteComment(commentId, journalId) {
 // KALKULATOR (DENGAN INDEKS ERITROSIT & CARA MENGHITUNG)
 // ==========================================
 function switchCalculatorMode() {
-  const mode = document.getElementById("calc-selector").value;
+  const calcSelector = document.getElementById("calc-selector");
   const container = document.getElementById("calc-container");
+  if (!calcSelector || !container) return;
+
+  const mode = calcSelector.value;
 
   if (mode === "three_rule") {
     container.innerHTML = `
@@ -571,14 +609,14 @@ function switchCalculatorMode() {
         <div class="form-group">
           <label>Parameter yang diketahui:</label>
           <div class="custom-dropdown" id="three-known-dropdown">
-            <div class="custom-dropdown-selected" onclick="toggleDropdown('three-known-dropdown')">
+            <div class="custom-dropdown-selected" onclick="toggleDropdown('three-known-dropdown', event)">
               <span id="three-known-text">Diketahui Hemoglobin (HB)</span>
               <i class="fa-solid fa-chevron-down"></i>
             </div>
             <div class="custom-dropdown-options">
-              <div onclick="setDropdownValue('three-known-dropdown', 'know_hb', 'Diketahui Hemoglobin (HB)')">Diketahui Hemoglobin (HB)</div>
-              <div onclick="setDropdownValue('three-known-dropdown', 'know_hct', 'Diketahui Hematokrit (HCT)')">Diketahui Hematokrit (HCT)</div>
-              <div onclick="setDropdownValue('three-known-dropdown', 'know_ae', 'Diketahui Antal Eritrosit (AE)')">Diketahui Antal Eritrosit (AE)</div>
+              <div onclick="setDropdownValue('three-known-dropdown', 'know_hb', 'Diketahui Hemoglobin (HB)', event)">Diketahui Hemoglobin (HB)</div>
+              <div onclick="setDropdownValue('three-known-dropdown', 'know_hct', 'Diketahui Hematokrit (HCT)', event)">Diketahui Hematokrit (HCT)</div>
+              <div onclick="setDropdownValue('three-known-dropdown', 'know_ae', 'Diketahui Antal Eritrosit (AE)', event)">Diketahui Antal Eritrosit (AE)</div>
             </div>
             <input type="hidden" id="three-known" value="know_hb">
           </div>
@@ -653,6 +691,8 @@ function toggleThreeRuleInputs() {
   const known = document.getElementById("three-known").value;
   const label = document.getElementById("label-three-val");
   const input = document.getElementById("three-val");
+
+  if (!label || !input) return;
 
   if (known === "know_hb") {
     label.innerText = "Masukkan HB (g/dL):";
