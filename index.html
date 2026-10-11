@@ -132,17 +132,20 @@
           <input type="text" id="journal-title" required placeholder="Contoh: Hemoglobin (Hb)">
         </div>
 
-        <!-- Custom Dropdown untuk Kategori Jurnal -->
+        <!-- Custom Dropdown Kategori -->
         <div class="form-group">
           <label>Kategori *</label>
           <div class="custom-dropdown" id="journal-cat-dropdown">
-            <div class="custom-dropdown-selected" onclick="toggleCustomDropdown('journal-cat-dropdown')">Hematologi</div>
+            <div class="custom-dropdown-selected" onclick="toggleDropdown('journal-cat-dropdown')">
+              <span id="journal-cat-text">Hematologi</span>
+              <i class="fa-solid fa-chevron-down"></i>
+            </div>
             <div class="custom-dropdown-options">
-              <div onclick="selectCustomOption('journal-cat-dropdown', 'Hematologi', 'Hematologi')">Hematologi</div>
-              <div onclick="selectCustomOption('journal-cat-dropdown', 'Kimia Klinik', 'Kimia Klinik')">Kimia Klinik</div>
-              <div onclick="selectCustomOption('journal-cat-dropdown', 'Urinalisis', 'Urinalisis')">Urinalisis</div>
-              <div onclick="selectCustomOption('journal-cat-dropdown', 'Parasitologi', 'Parasitologi')">Parasitologi</div>
-              <div onclick="selectCustomOption('journal-cat-dropdown', 'Jurnal Umum', 'Jurnal Umum')">Jurnal Umum</div>
+              <div onclick="setDropdownValue('journal-cat-dropdown', 'Hematologi', 'Hematologi')">Hematologi</div>
+              <div onclick="setDropdownValue('journal-cat-dropdown', 'Kimia Klinik', 'Kimia Klinik')">Kimia Klinik</div>
+              <div onclick="setDropdownValue('journal-cat-dropdown', 'Urinalisis', 'Urinalisis')">Urinalisis</div>
+              <div onclick="setDropdownValue('journal-cat-dropdown', 'Parasitologi', 'Parasitologi')">Parasitologi</div>
+              <div onclick="setDropdownValue('journal-cat-dropdown', 'Jurnal Umum', 'Jurnal Umum')">Jurnal Umum</div>
             </div>
             <input type="hidden" id="journal-category" value="Hematologi">
           </div>
@@ -180,16 +183,20 @@
       <h3 class="modal-title">Kalkulator Hematologi Klinik</h3>
       <p class="synonyms">Pilih jenis perhitungan rumus sel darah.</p>
       
-      <!-- Custom Dropdown untuk Kalkulator -->
+      <!-- Custom Dropdown Kalkulator -->
       <div class="form-group" style="margin-top: 10px;">
         <label>Pilih Metode Perhitungan:</label>
         <div class="custom-dropdown" id="calc-custom-dropdown">
-          <div class="custom-dropdown-selected" onclick="toggleCustomDropdown('calc-custom-dropdown')">Three Rule (HB, HCT, AE)</div>
+          <div class="custom-dropdown-selected" onclick="toggleDropdown('calc-custom-dropdown')">
+            <span id="calc-selected-text">Three Rule (HB, HCT, AE)</span>
+            <i class="fa-solid fa-chevron-down"></i>
+          </div>
           <div class="custom-dropdown-options">
-            <div onclick="selectCalcOption('three_rule', 'Three Rule (HB, HCT, AE)')">Three Rule (HB, HCT, AE)</div>
-            <div onclick="selectCalcOption('hitung_eritrosit', 'Hitung Eritrosit (AE / Antal Eritrosit)')">Hitung Eritrosit (AE / Antal Eritrosit)</div>
-            <div onclick="selectCalcOption('hitung_leukosit', 'Hitung Leukosit (AL / Antal Leukosit)')">Hitung Leukosit (AL / Antal Leukosit)</div>
-            <div onclick="selectCalcOption('hitung_trombosit', 'Hitung Trombosit (AT / Antal Trombosit)')">Hitung Trombosit (AT / Antal Trombosit)</div>
+            <div onclick="setDropdownValue('calc-custom-dropdown', 'three_rule', 'Three Rule (HB, HCT, AE)')">Three Rule (HB, HCT, AE)</div>
+            <div onclick="setDropdownValue('calc-custom-dropdown', 'indices', 'Kalkulator Indeks Eritrosit (MCV, MCH, MCHC)')">Kalkulator Indeks Eritrosit (MCV, MCH, MCHC)</div>
+            <div onclick="setDropdownValue('calc-custom-dropdown', 'hitung_eritrosit', 'Hitung Eritrosit (AE / Antal Eritrosit)')">Hitung Eritrosit (AE / Antal Eritrosit)</div>
+            <div onclick="setDropdownValue('calc-custom-dropdown', 'hitung_leukosit', 'Hitung Leukosit (AL / Antal Leukosit)')">Hitung Leukosit (AL / Antal Leukosit)</div>
+            <div onclick="setDropdownValue('calc-custom-dropdown', 'hitung_trombosit', 'Hitung Trombosit (AT / Antal Trombosit)')">Hitung Trombosit (AT / Antal Trombosit)</div>
           </div>
           <input type="hidden" id="calc-selector" value="three_rule">
         </div>
