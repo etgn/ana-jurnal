@@ -10,7 +10,7 @@ let allJournals = [];
 let currentCategory = "ALL";
 
 // ==========================================
-// INITIALIZATION
+// INITIALIZATION & EVENT LISTENERS
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
   if (localStorage.getItem("isAdmin") === "true") {
@@ -20,31 +20,48 @@ document.addEventListener("DOMContentLoaded", () => {
   loadJournals();
   switchCalculatorMode();
 
-  // Tutup semua custom dropdown saat klik di luar
-  window.addEventListener("click", (e) => {
-    if (!e.target.closest(".custom-dropdown")) {
-      document.querySelectorAll(".custom-dropdown").forEach(el => el.classList.remove("open"));
-    }
+  // Tutup semua dropdown jika area luar diklik
+  window.addEventListener("click", () => {
+    closeAllDropdowns();
   });
 });
 
-// Custom Dropdown Handler Umum
-function toggleCustomDropdown(dropdownId) {
-  document.querySelectorAll(".custom-dropdown").forEach(el => {
-    if (el.id !== dropdownId) el.classList.remove("open");
-  });
-  document.getElementById(dropdownId).classList.toggle("open");
+// Fungsi Toggle Dropdown
+function toggleDropdown(dropdownId) {
+  event.stopPropagation();
+  const dropdown = document.getElementById(dropdownId);
+  const isActive = dropdown.classList.contains("active");
+
+  closeAllDropdowns();
+
+  if (!isActive) {
+    dropdown.classList.add("active");
+  }
 }
 
-function selectCustomOption(dropdownId, value, text) {
-  const dropdown = document.getElementById(dropdownId);
-  dropdown.querySelector(".custom-dropdown-selected").innerText = text;
-  dropdown.querySelector("input[type='hidden']").value = value;
-  dropdown.classList.remove("open");
-
-  if (dropdownId === 'calc-custom-dropdown') {
+function setDropdownValue(dropdownId, value, text) {
+  event.stopPropagation();
+  
+  if (dropdownId === 'journal-cat-dropdown') {
+    document.getElementById("journal-cat-text").innerText = text;
+    document.getElementById("journal-category").value = value;
+  } else if (dropdownId === 'calc-custom-dropdown') {
+    document.getElementById("calc-selected-text").innerText = text;
+    document.getElementById("calc-selector").value = value;
     switchCalculatorMode();
+  } else if (dropdownId === 'three-known-dropdown') {
+    document.getElementById("three-known-text").innerText = text;
+    document.getElementById("three-known").value = value;
+    toggleThreeRuleInputs();
   }
+
+  closeAllDropdowns();
+}
+
+function closeAllDropdowns() {
+  document.querySelectorAll(".custom-dropdown").forEach(el => {
+    el.classList.remove("active");
+  });
 }
 
 // ==========================================
@@ -201,7 +218,7 @@ async function loadJournals() {
     }
   } catch (err) {
     console.error(err);
-    listEl.innerHTML = `<p style="color: var(--danger); font-weight: 600;">Gagal memuat data. Pastikan kolom database 'updated_at' sudah ditambahkan via SQL Editor.</p>`;
+    listEl.innerHTML = `<p style="color: var(--danger); font-weight: 600;">Gagal memuat data. Pastikan kolom 'updated_at' sudah ditambahkan di Supabase.</p>`;
   }
 }
 
@@ -349,7 +366,7 @@ function openAddJournalModal() {
   document.getElementById("form-modal-title").innerText = "Tambah Parameter / Jurnal";
   document.getElementById("form-modal-subtitle").innerText = "Tambahkan data referensi baru ke database cloud.";
   document.getElementById("btn-submit-journal-text").innerText = "Kirim Ke Cloud Database";
-  selectCustomOption('journal-cat-dropdown', 'Hematologi', 'Hematologi');
+  setDropdownValue('journal-cat-dropdown', 'Hematologi', 'Hematologi');
   openModal("modal-submit");
 }
 
@@ -359,7 +376,7 @@ function openEditJournalModal(id) {
 
   document.getElementById("edit-journal-id").value = journal.id;
   document.getElementById("journal-title").value = journal.title || "";
-  selectCustomOption('journal-cat-dropdown', journal.category || 'Hematologi', journal.category || 'Hematologi');
+  setDropdownValue('journal-cat-dropdown', journal.category || 'Hematologi', journal.category || 'Hematologi');
   document.getElementById("journal-ref").value = journal.reference_range || "";
   document.getElementById("journal-desc").value = journal.description || "";
   document.getElementById("journal-contributor").value = journal.contributor || "Ana";
@@ -539,7 +556,7 @@ async function deleteComment(commentId, journalId) {
 }
 
 // ==========================================
-// KALKULATOR (DENGAN CARA MENGHITUNG)
+// KALKULATOR (DENGAN INDEKS ERITROSIT & CARA MENGHITUNG)
 // ==========================================
 function switchCalculatorMode() {
   const mode = document.getElementById("calc-selector").value;
@@ -554,11 +571,14 @@ function switchCalculatorMode() {
         <div class="form-group">
           <label>Parameter yang diketahui:</label>
           <div class="custom-dropdown" id="three-known-dropdown">
-            <div class="custom-dropdown-selected" onclick="toggleCustomDropdown('three-known-dropdown')">Diketahui Hemoglobin (HB)</div>
+            <div class="custom-dropdown-selected" onclick="toggleDropdown('three-known-dropdown')">
+              <span id="three-known-text">Diketahui Hemoglobin (HB)</span>
+              <i class="fa-solid fa-chevron-down"></i>
+            </div>
             <div class="custom-dropdown-options">
-              <div onclick="selectCustomOption('three-known-dropdown', 'know_hb', 'Diketahui Hemoglobin (HB)'); toggleThreeRuleInputs();">Diketahui Hemoglobin (HB)</div>
-              <div onclick="selectCustomOption('three-known-dropdown', 'know_hct', 'Diketahui Hematokrit (HCT)'); toggleThreeRuleInputs();">Diketahui Hematokrit (HCT)</div>
-              <div onclick="selectCustomOption('three-known-dropdown', 'know_ae', 'Diketahui Antal Eritrosit (AE)'); toggleThreeRuleInputs();">Diketahui Antal Eritrosit (AE)</div>
+              <div onclick="setDropdownValue('three-known-dropdown', 'know_hb', 'Diketahui Hemoglobin (HB)')">Diketahui Hemoglobin (HB)</div>
+              <div onclick="setDropdownValue('three-known-dropdown', 'know_hct', 'Diketahui Hematokrit (HCT)')">Diketahui Hematokrit (HCT)</div>
+              <div onclick="setDropdownValue('three-known-dropdown', 'know_ae', 'Diketahui Antal Eritrosit (AE)')">Diketahui Antal Eritrosit (AE)</div>
             </div>
             <input type="hidden" id="three-known" value="know_hb">
           </div>
@@ -571,6 +591,20 @@ function switchCalculatorMode() {
 
         <button type="button" class="btn-primary" style="width: 100%; justify-content: center;" onclick="calculateThreeRule()">Hitung dengan Rumus</button>
         <div id="three-result" class="calc-result-box" style="display: none; margin-top: 10px;"></div>
+      </div>
+    `;
+  } else if (mode === "indices") {
+    container.innerHTML = `
+      <div style="background: var(--slate-50); padding: 16px; border-radius: 8px; border: 1px solid var(--slate-200);">
+        <h4 style="color: var(--primary-dark); margin-bottom: 6px;">Kalkulator Indeks Eritrosit (MCV, MCH, MCHC)</h4>
+        <p style="font-size: 0.8rem; color: var(--slate-500); margin-bottom: 12px;">Hitung indeks eritrosit otomatis berdasarkan data pasien.</p>
+        
+        <div class="form-group"><label>Kadar Hemoglobin (Hb – g/dL)</label><input type="number" id="ind-hb" step="0.1" placeholder="9"></div>
+        <div class="form-group"><label>Jumlah Eritrosit (RBC – juta/µL)</label><input type="number" id="ind-rbc" step="0.1" placeholder="5.5"></div>
+        <div class="form-group"><label>Hematokrit (PCV – %)</label><input type="number" id="ind-hct" step="0.1" placeholder="30"></div>
+        
+        <button type="button" class="btn-primary" style="width: 100%; justify-content: center;" onclick="calculateIndices()">Hitung Indeks Sekarang</button>
+        <div id="ind-result" class="calc-result-box" style="display: none; margin-top: 10px;"></div>
       </div>
     `;
   } else if (mode === "hitung_eritrosit") {
@@ -678,6 +712,30 @@ function calculateThreeRule() {
   resEl.innerHTML = `<strong>Cara & Hasil Perhitungan Three Rule:</strong><br>${steps}`;
 }
 
+function calculateIndices() {
+  const hb = parseFloat(document.getElementById("ind-hb").value);
+  const rbc = parseFloat(document.getElementById("ind-rbc").value);
+  const hct = parseFloat(document.getElementById("ind-hct").value);
+  const resEl = document.getElementById("ind-result");
+
+  if (!hb || !rbc || !hct) {
+    showPopup("Peringatan", "Mohon isi semua nilai (Hb, RBC, HCT) dengan benar!", "error");
+    return;
+  }
+
+  const mcv = (hct / rbc) * 10;
+  const mch = (hb / rbc) * 10;
+  const mchc = (hb / hct) * 100;
+
+  resEl.style.display = "block";
+  resEl.innerHTML = `
+    <strong>Hasil Perhitungan Indeks Eritrosit:</strong><br>
+    • MCV (Volume Eritrosit Rata-rata): <strong>${mcv.toFixed(1)} fL</strong> (Normal: 80–100 fL)<br>
+    • MCH (Hemoglobin Eritrosit Rata-rata): <strong>${mch.toFixed(1)} pg</strong> (Normal: 27–31 pg)<br>
+    • MCHC (Kadar Hb Eritrosit Rata-rata): <strong>${mchc.toFixed(1)} g/dL</strong> (Normal: 32–36 g/dL)
+  `;
+}
+
 function calculateAE() {
   const n = parseFloat(document.getElementById("ae-n").value);
   const p = parseFloat(document.getElementById("ae-p").value) || 200;
@@ -729,7 +787,7 @@ function calculateAT() {
   const resEl = document.getElementById("at-result");
 
   if (!n) {
-    showPopup("Peringatan", "Mohon masukkan jumlah sel terhitung (N)!", "error");
+    showPopup("Peringatan", "Mohon masukkan jumlah trombosit terhitung (N)!", "error");
     return;
   }
 
