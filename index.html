@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedLab Reference & Jurnal Klinik - Didedikasikan untuk Ana</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Dedication Notice Bar for Ana -->
+    <div class="ana-dedication-banner">
+        <div class="banner-content">
+            <i class="fa-solid fa-heart-pulse"></i>
+            <span>Didedikasikan spesial untuk masa depan klinis terbaik, <strong>Ana</strong> 🩺✨</span>
+        </div>
+    </div>
+
+    <!-- Main Navigation Header -->
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-area">
+                <div class="logo-icon"><i class="fa-solid fa-flask-vial"></i></div>
+                <div>
+                    <h1>MedLab Reference</h1>
+                    <p>Kamus, Kalkulator & Jurnal Komprehensif TLM</p>
+                </div>
+            </div>
+            
+            <div class="header-actions">
+                <div class="search-box-wrapper">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="searchInput" placeholder="Cari parameter, jurnal, atau kasus klinis...">
+                </div>
+                <button id="openCalculatorBtn" class="btn-secondary">
+                    <i class="fa-solid fa-calculator"></i> Kalkulator Lab
+                </button>
+                <button id="openSubmitModalBtn" class="btn-primary">
+                    <i class="fa-solid fa-pen-nib"></i> Kirim Jurnal
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Layout -->
+    <main class="main-container">
+        <!-- Sidebar Filter / Categories -->
+        <aside class="sidebar">
+            <h3>Kategori Pemeriksaan</h3>
+            <ul id="categoryList" class="category-list">
+                <li class="active" data-category="all"><i class="fa-solid fa-border-all"></i> Semua Konten</li>
+                <li data-category="Hematologi"><i class="fa-solid fa-droplet"></i> Hematologi</li>
+                <li data-category="Kimia Klinik"><i class="fa-solid fa-vial"></i> Kimia Klinik</li>
+                <li data-category="Imunologi & Serologi"><i class="fa-solid fa-shield-virus"></i> Imunologi & Serologi</li>
+                <li data-category="Urinalisis"><i class="fa-solid fa-flask"></i> Urinalisis</li>
+                <li data-category="Mikrobiologi"><i class="fa-solid fa-bacteria"></i> Mikrobiologi</li>
+                <li data-category="Jurnal Umum"><i class="fa-solid fa-book-medical"></i> Jurnal & Studi Kasus</li>
+            </ul>
+
+            <div class="sidebar-info-card">
+                <i class="fa-solid fa-database"></i>
+                <div>
+                    <h4>Database Gratis (Cloud-Free)</h4>
+                    <p>Data tersimpan di penyimpanan lokal browser dan dapat diekspor/diimpor kapan saja untuk dibagikan ke server GitHub.</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Content Area -->
+        <section class="content-section">
+            <div class="results-header">
+                <h2 id="sectionTitle">Semua Parameter & Jurnal Laboratorium</h2>
+                <span id="resultCount">Menampilkan 0 konten</span>
+            </div>
+
+            <div id="parameterContainer" class="parameter-grid">
+                <!-- Dynamic cards loaded via app.js -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Detail Modal Overlay (Jurnal + Komentar) -->
+    <div id="detailModal" class="modal-overlay">
+        <div class="modal-card">
+            <button class="modal-close" id="closeModalBtn"><i class="fa-solid fa-xmark"></i></button>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <!-- Calculator Modal Overlay -->
+    <div id="calcModal" class="modal-overlay">
+        <div class="modal-card">
+            <button class="modal-close" id="closeCalcModalBtn"><i class="fa-solid fa-xmark"></i></button>
+            <span class="modal-category">Alat Bantu Klinik</span>
+            <h2 class="modal-title">Kalkulator Indeks Eritrosit (MCV, MCH, MCHC)</h2>
+            <p class="modal-synonyms">Hitung indeks eritrosit otomatis berdasarkan data pasien untuk membantu klasifikasi jenis anemia.</p>
+            
+            <div class="calc-form">
+                <div class="form-group">
+                    <label>Kadar Hemoglobin (Hb - g/dL)</label>
+                    <input type="number" id="calcHb" step="0.1" placeholder="Contoh: 11.5">
+                </div>
+                <div class="form-group">
+                    <label>Jumlah Eritrosit (RBC - juta/µL)</label>
+                    <input type="number" id="calcRbc" step="0.01" placeholder="Contoh: 4.2">
+                </div>
+                <div class="form-group">
+                    <label>Hematokrit (PCV - %)</label>
+                    <input type="number" id="calcHct" step="0.1" placeholder="Contoh: 35.0">
+                </div>
+                <button id="calculateBtn" class="btn-submit-action">Hitung Indeks Sekarang</button>
+            </div>
+
+            <div id="calcResultContainer" class="calc-result-box" style="display: none;">
+                <h4>Hasil Perhitungan:</h4>
+                <div id="calcResultText"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Submit Journal Modal Overlay -->
+    <div id="submitModal" class="modal-overlay">
+        <div class="modal-card">
+            <button class="modal-close" id="closeSubmitModalBtn"><i class="fa-solid fa-xmark"></i></button>
+            <div class="submit-form-container">
+                <span class="modal-category">Kontribusi Publik</span>
+                <h2 class="modal-title">Kirim Jurnal / Kasus Lab</h2>
+                <p class="modal-synonyms">Bagikan ringkasan jurnal ilmiah atau gambar mikroskopis temuan laboratorium.</p>
+
+                <form id="submitJournalForm">
+                    <div class="form-group">
+                        <label for="contribName">Nama Kontributor</label>
+                        <input type="text" id="contribName" required placeholder="Contoh: Ana S.Tr.A.K">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contribTitle">Judul Topik / Parameter / Kasus</label>
+                        <input type="text" id="contribTitle" required placeholder="Contoh: Morfologi Sel Darah pada Malaria Tropika">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contribCategory">Kategori</label>
+                        <select id="contribCategory">
+                            <option value="Jurnal Umum">Jurnal & Studi Kasus</option>
+                            <option value="Hematologi">Hematologi</option>
+                            <option value="Kimia Klinik">Kimia Klinik</option>
+                            <option value="Imunologi & Serologi">Imunologi & Serologi</option>
+                            <option value="Urinalisis">Urinalisis</option>
+                            <option value="Mikrobiologi">Mikrobiologi</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contribRange">Nilai Rujukan / Keterangan</label>
+                        <input type="text" id="contribRange" placeholder="Contoh: Negatif / Rujukan Normal">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contribImage">Link Gambar / Ilustrasi (URL Gambar Opsional)</label>
+                        <input type="url" id="contribImage" placeholder="https://example.com/gambar-sel.jpg">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contribDesc">Penjelasan / Abstrak Jurnal</label>
+                        <textarea id="contribDesc" rows="4" required placeholder="Tuliskan isi jurnal atau pembahasan kasus..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-submit-action">Publikasikan Jurnal</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <main class="main-footer">
+        <p>MedLab Reference &copy; 2026. Dibuat dengan penuh cinta untuk <strong>Ana</strong>. Berjalan secara gratis via GitHub Pages.</p>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
