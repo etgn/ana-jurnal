@@ -33,9 +33,7 @@ body {
     line-height: 1.6;
 }
 
-/* ================================================================= */
-/* DEDICATION BANNER FOR ANA                                         */
-/* ================================================================= */
+/* DEDICATION BANNER */
 .ana-dedication-banner {
     background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
     color: var(--white);
@@ -64,9 +62,7 @@ body {
     100% { transform: scale(1); }
 }
 
-/* ================================================================= */
-/* HEADER & NAVIGATION                                               */
-/* ================================================================= */
+/* HEADER & NAVIGATION */
 .main-header {
     background: var(--white);
     border-bottom: 1px solid var(--slate-200);
@@ -188,9 +184,7 @@ body {
     background: var(--slate-900);
 }
 
-/* ================================================================= */
-/* MAIN LAYOUT & SIDEBAR                                             */
-/* ================================================================= */
+/* MAIN LAYOUT & SIDEBAR */
 .main-container {
     max-width: 1300px;
     margin: 32px auto;
@@ -291,9 +285,7 @@ body {
     line-height: 1.5;
 }
 
-/* ================================================================= */
-/* CONTENT & CARDS GRID                                              */
-/* ================================================================= */
+/* CONTENT & CARDS GRID */
 .content-section {
     display: flex;
     flex-direction: column;
@@ -424,9 +416,7 @@ body {
     gap: 6px;
 }
 
-/* ================================================================= */
-/* MODAL SYSTEM (DETAIL, FORM, CALCULATOR)                           */
-/* ================================================================= */
+/* MODAL SYSTEM */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -562,9 +552,80 @@ body {
     font-weight: 500;
 }
 
-/* ================================================================= */
-/* COMMENTS SYSTEM INSIDE MODAL                                      */
-/* ================================================================= */
+/* MODERN CUSTOM DROPDOWN (GANTI SELECT BAWAAN) */
+.custom-dropdown {
+    position: relative;
+    width: 100%;
+    user-select: none;
+}
+
+.custom-dropdown-selected {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--slate-200);
+    border-radius: var(--radius);
+    background-color: var(--slate-50);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--slate-900);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.custom-dropdown-selected::after {
+    content: "\f078";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 0.8rem;
+    color: var(--primary);
+    transition: transform 0.2s ease;
+}
+
+.custom-dropdown.open .custom-dropdown-selected::after {
+    transform: rotate(180deg);
+}
+
+.custom-dropdown-selected:hover {
+    border-color: var(--primary);
+    background-color: var(--white);
+}
+
+.custom-dropdown-options {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    width: 100%;
+    background: var(--white);
+    border: 1px solid var(--slate-200);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    display: none;
+    z-index: 50;
+    overflow: hidden;
+}
+
+.custom-dropdown.open .custom-dropdown-options {
+    display: block;
+}
+
+.custom-dropdown-options div {
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--slate-700);
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.custom-dropdown-options div:hover {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+}
+
+/* COMMENTS SYSTEM */
 .comments-section {
     margin-top: 32px;
     border-top: 1px solid var(--slate-200);
@@ -600,15 +661,21 @@ body {
     font-weight: 700;
     color: var(--primary-dark);
     margin-bottom: 2px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.comment-time {
+    font-size: 0.75rem;
+    color: var(--slate-500);
+    font-weight: 400;
 }
 
 .comment-text {
     color: var(--slate-700);
 }
 
-/* ================================================================= */
-/* FORMS & INPUTS                                                    */
-/* ================================================================= */
+/* FORMS & INPUTS */
 .form-group {
     margin-bottom: 14px;
     display: flex;
@@ -623,7 +690,6 @@ body {
 }
 
 .form-group input, 
-.form-group select, 
 .form-group textarea {
     padding: 10px 12px;
     border: 1px solid var(--slate-200);
@@ -635,7 +701,6 @@ body {
 }
 
 .form-group input:focus, 
-.form-group select:focus, 
 .form-group textarea:focus {
     border-color: var(--primary);
     background: var(--white);
@@ -667,11 +732,10 @@ body {
     border-radius: 8px;
     color: var(--primary-dark);
     font-weight: 600;
+    line-height: 1.6;
 }
 
-/* ================================================================= */
-/* FOOTER                                                            */
-/* ================================================================= */
+/* FOOTER */
 .main-footer {
     text-align: center;
     padding: 32px 0;
@@ -684,4 +748,4 @@ body {
 
 .main-footer strong {
     color: var(--primary);
-    }
+}
