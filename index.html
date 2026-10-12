@@ -42,6 +42,18 @@
         <button class="btn-primary" onclick="openAddJournalModal()">
           <i class="fa-solid fa-plus"></i> Tambah Jurnal
         </button>
+
+        <!-- FITUR BACKUP & RESTORE (KHUSUS ADMIN) -->
+        <div id="admin-backup-actions" style="display: none; gap: 8px; align-items: center;">
+          <button class="btn-secondary" style="background: var(--warning); color: var(--slate-900);" onclick="backupDataToJson()">
+            <i class="fa-solid fa-download"></i> Backup
+          </button>
+          <label class="btn-secondary" style="background: var(--success); color: var(--white); cursor: pointer; margin-bottom: 0;">
+            <i class="fa-solid fa-upload"></i> Restore
+            <input type="file" id="restore-file-input" accept=".json" style="display: none;" onchange="restoreDataFromJson(event)">
+          </label>
+        </div>
+
         <button id="btn-login-admin" class="btn-secondary" onclick="openModal('modal-admin')">
           <i class="fa-solid fa-lock"></i> Admin
         </button>

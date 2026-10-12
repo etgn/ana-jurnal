@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// Fungsi Toggle Dropdown (Diberi parameter event 'e' agar lolos build GitHub Pages)
+// Fungsi Toggle Dropdown
 function toggleDropdown(dropdownId, e) {
   if (e && typeof e.stopPropagation === "function") {
     e.stopPropagation();
@@ -79,6 +79,86 @@ function closeAllDropdowns() {
   document.querySelectorAll(".custom-dropdown").forEach(el => {
     el.classList.remove("active");
   });
+}
+
+// ==========================================
+// FITUR BACKUP & RESTORE DATA (KHUSUS ADMIN)
+// ==========================================
+function backupDataToJson() {
+  if (!isAdminLoggedIn) {
+    showPopup("Akses Ditolak", "Fitur ini hanya untuk Admin!", "error");
+    return;
+  }
+
+  if (!allJournals || allJournals.length === 0) {
+    showPopup("Informasi", "Tidak ada data jurnal untuk dibackup.", "info");
+    return;
+  }
+
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(allJournals, null, 2));
+  const downloadAnchor = document.createElement('a');
+  downloadAnchor.setAttribute("href", dataStr);
+  downloadAnchor.setAttribute("download", `medlab_backup_${new Date().toISOString().slice(0, 10)}.json`);
+  document.body.appendChild(downloadAnchor);
+  downloadAnchor.click();
+  downloadAnchor.remove();
+
+  showPopup("Berhasil", "File backup berhasil diunduh.", "success");
+}
+
+async function restoreDataFromJson(event) {
+  if (!isAdminLoggedIn) {
+    showPopup("Akses Ditolak", "Fitur ini hanya untuk Admin!", "error");
+    return;
+  }
+
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = async function(e) {
+    try {
+      const importedData = JSON.parse(e.target.result);
+      if (!Array.isArray(importedData)) {
+        throw new Error("Format file JSON tidak valid.");
+      }
+
+      showPopup("Informasi", "Memproses pemulihan data ke database...", "info");
+
+      let successCount = 0;
+      for (let item of importedData) {
+        const payload = {
+          id: item.id || "jurnal_" + Date.now() + Math.random().toString(36).substring(2, 5),
+          title: item.title,
+          category: item.category,
+          reference_range: item.reference_range,
+          description: item.description,
+          image_url: item.image_url || "",
+          contributor: item.contributor || "Ana",
+          created_at: item.created_at || new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        };
+
+        try {
+          await supabaseFetch(`journals?id=eq.${payload.id}`, { method: "DELETE" });
+        } catch(err) {}
+
+        await supabaseFetch("journals", {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+        successCount++;
+      }
+
+      showPopup("Berhasil", `Berhasil memulihkan ${successCount} data parameter ke database!`, "success");
+      loadJournals();
+    } catch (err) {
+      showPopup("Gagal", "Gagal membaca file JSON: " + err.message, "error");
+    } finally {
+      event.target.value = "";
+    }
+  };
+  reader.readAsText(file);
 }
 
 // ==========================================
@@ -211,13 +291,16 @@ function logoutAdmin() {
 function updateAdminUI() {
   const btnLogin = document.getElementById("btn-login-admin");
   const btnLogout = document.getElementById("btn-logout-admin");
+  const backupActions = document.getElementById("admin-backup-actions");
 
   if (isAdminLoggedIn) {
     if (btnLogin) btnLogin.style.display = "none";
     if (btnLogout) btnLogout.style.display = "flex";
+    if (backupActions) backupActions.style.display = "flex";
   } else {
     if (btnLogin) btnLogin.style.display = "flex";
     if (btnLogout) btnLogout.style.display = "none";
+    if (backupActions) backupActions.style.display = "none";
   }
   renderJournals(allJournals);
 }
